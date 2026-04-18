@@ -1,0 +1,25 @@
+[Unit]
+Description=Servicio para la API Actividad Docker
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=juanpa
+# Limpia contenedores previos con el mismo nombre para evitar conflictos
+ExecStartPre=-/usr/bin/docker stop actividad_container
+ExecStartPre=-/usr/bin/docker rm actividad_container
+# Ejecuta el contenedor. 
+# NOTA: No usamos el flag -d para que systemd pueda monitorear el proceso.
+ExecStart=/usr/bin/docker run --name actividad_container \
+    -p 8000:8000 \
+    -v /home/juanpa/Documents/university/S3.2026/SO/actividad_servidores/data:/app/data:z \
+    actividad_docker:latest
+# Comando para detenerlo limpiamente
+ExecStop=/usr/bin/docker stop actividad_container
+
+[Install]
+# Se deja comentado o vacío para que NO inicie automáticamente al bootear
+# WantedBy=multi-user.target
+
+
